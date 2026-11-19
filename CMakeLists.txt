@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
+# deal.II must be found and initialized BEFORE project()
+find_package(deal.II 9.5 REQUIRED)
+deal_ii_initialize_cached_variables()
+
 project(cmake-exercise LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -15,10 +19,14 @@ find_package(yaml-cpp 0.6.3 REQUIRED)
 # Build the program "main" from these source files
 add_executable(main
     main.cpp
+    fem/fem.cpp
     flatset/flatset.cpp
     filesystem/filesystem.cpp
     yamlParser/yamlParser.cpp
 )
 
 # Link Boost: headers for flat_set, the filesystem library for filesystem
-target_link_libraries(main PRIVATE Boost::headers Boost::filesystem yaml-cpp)
+target_link_libraries(main Boost::headers Boost::filesystem yaml-cpp)
+
+# Add deal.II's compiler flags, include paths and libraries to "main"
+deal_ii_setup_target(main)
